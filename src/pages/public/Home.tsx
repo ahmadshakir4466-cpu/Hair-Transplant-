@@ -6,7 +6,7 @@ import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { Service } from '../../types';
 
 export default function Home() {
-  const { clinicSettings } = useApp();
+  const { clinicSettings, isLoadingSettings } = useApp();
   const [services, setServices] = useState<Service[]>([]);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const clinicName = clinicSettings?.clinic_name || 'Aesthetic Laser & Hair Transplant Clinic';
@@ -53,16 +53,18 @@ export default function Home() {
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center pt-20 pb-32">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src={clinicSettings?.hero_image_url || "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80"} 
-            alt="Modern Clinic" 
-            className="w-full h-full object-cover"
-          />
+        <div className="absolute inset-0 z-0 bg-teal-50/50">
+          {!isLoadingSettings && (
+            <img 
+              src={clinicSettings?.hero_image_url || "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80"} 
+              alt="Modern Clinic" 
+              className="w-full h-full object-cover animate-in fade-in duration-1000"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent"></div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full transition-opacity duration-1000 ${isLoadingSettings ? 'opacity-0' : 'opacity-100'}`}>
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 text-teal-700 font-medium text-sm mb-6 border border-teal-100">
               <Star size={14} className="fill-current" />
@@ -204,18 +206,20 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="relative">
-              <div className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl relative z-10">
-                <img 
-                  src={clinicSettings?.about_image_url || "https://images.unsplash.com/photo-1598256989800-fea5f5ce73eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80"} 
-                  alt="Doctor and patient" 
-                  className="w-full h-full object-cover"
-                />
+              <div className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl relative z-10 bg-slate-50">
+                {!isLoadingSettings && (
+                  <img 
+                    src={clinicSettings?.about_image_url || "https://images.unsplash.com/photo-1598256989800-fea5f5ce73eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80"} 
+                    alt="Doctor and patient" 
+                    className="w-full h-full object-cover animate-in fade-in duration-1000"
+                  />
+                )}
               </div>
               <div className="absolute top-12 -left-8 w-64 h-64 bg-teal-100 rounded-full blur-3xl opacity-50 z-0"></div>
               <div className="absolute bottom-12 -right-8 w-64 h-64 bg-blue-100 rounded-full blur-3xl opacity-50 z-0"></div>
             </div>
             
-            <div>
+            <div className={`transition-opacity duration-1000 ${isLoadingSettings ? 'opacity-0' : 'opacity-100'}`}>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-medium text-sm mb-6">
                 Our Practice
               </div>
