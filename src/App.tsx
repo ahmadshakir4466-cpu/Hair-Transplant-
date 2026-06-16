@@ -11,6 +11,7 @@ import BookAppointment from './pages/public/BookAppointment';
 import BookingSuccess from './pages/public/BookingSuccess';
 import ClientAuth from './pages/public/ClientAuth';
 import ClientDashboard from './pages/public/ClientDashboard';
+import ResetPassword from './pages/public/ResetPassword';
 
 import AdminLogin from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="/book" element={<BookAppointment />} />
             <Route path="/booking-success" element={<BookingSuccess />} />
             <Route path="/client-auth" element={<ClientAuth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/my-appointments" element={<ClientDashboard />} />
           </Route>
 

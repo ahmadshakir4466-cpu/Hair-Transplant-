@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { User, Session } from '@supabase/supabase-js';
 import toast from 'react-hot-toast';
@@ -16,6 +16,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const currentUserRef = useRef<string | null>(null);
 
   useEffect(() => {
     // Check active sessions and sets the user
@@ -50,8 +51,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const handleSession = async (session: Session | null) => {
     if (session?.user) {
       setUser(session.user);
-      await checkAdminStatus(session.user.id);
+      if (currentUserRef.current !== session.user.id) {
+        currentUserRef.current = session.user.id;
+        await checkAdminStatus(session.user.id);
+      } else {
+        setIsLoading(false);
+      }
     } else {
+      currentUserRef.current = null;
       setUser(null);
       setIsAdmin(false);
       setIsLoading(false);

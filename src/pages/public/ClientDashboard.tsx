@@ -36,7 +36,7 @@ export default function ClientDashboard() {
     if (user?.email) {
       fetchAppointments();
     }
-  }, [user]);
+  }, [user?.email]);
 
   const fetchAppointments = async () => {
     setIsLoading(true);
