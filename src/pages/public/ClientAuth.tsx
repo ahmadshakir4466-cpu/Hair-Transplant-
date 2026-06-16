@@ -45,7 +45,13 @@ export default function ClientAuth() {
       toast.success("Password reset instructions sent to your email!");
       setIsForgotPassword(false);
     } catch (err: any) {
-      toast.error(err.message || "An unexpected error occurred.");
+      if (err.message && err.message.includes('rate_limit')) {
+        toast.error("Too many attempts. Please wait a while before trying again.", { duration: 5000 });
+      } else if (err.message && err.message.includes('Error sending confirmation email')) {
+        toast.error("Email rate limit exceeded (3 per hour on free tier) or invalid email. Please try again later.", { duration: 6000 });
+      } else {
+        toast.error(err.message || "An unexpected error occurred.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -84,7 +90,13 @@ export default function ClientAuth() {
         }
       }
     } catch (err: any) {
-      toast.error(err.message || "An unexpected error occurred.");
+      if (err.message && err.message.includes('rate_limit')) {
+        toast.error("Too many attempts. Please wait a while before trying again.", { duration: 5000 });
+      } else if (err.message && err.message.includes('Error sending confirmation email')) {
+        toast.error("Email rate limit exceeded (3 per hour on free tier) or invalid email. Please try again later.", { duration: 6000 });
+      } else {
+        toast.error(err.message || "An unexpected error occurred.");
+      }
     } finally {
       setIsSubmitting(false);
     }
