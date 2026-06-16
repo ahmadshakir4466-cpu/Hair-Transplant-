@@ -3,7 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Appointment } from '../../types';
-import { Calendar, MapPin, X, Bell, Printer, User, History } from 'lucide-react';
+import { Calendar, MapPin, X, Bell, Printer, User, History, Camera, Lock, Mail } from 'lucide-react';
 import { format } from 'date-fns';
 import { useApp } from '../../contexts/AppContext';
 import jsPDF from 'jspdf';
@@ -20,7 +20,15 @@ export default function ClientDashboard() {
   const [activeTab, setActiveTab] = useState<'appointments' | 'profile'>('appointments');
   const [profileName, setProfileName] = useState(user?.user_metadata?.full_name || '');
   const [profilePhone, setProfilePhone] = useState(user?.user_metadata?.phone || '');
+  const [profileAvatar, setProfileAvatar] = useState(user?.user_metadata?.avatar_url || '');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
+
+  const [newEmail, setNewEmail] = useState(user?.email || '');
+  const [isSavingEmail, setIsSavingEmail] = useState(false);
+
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
 
   useEffect(() => {
     if (!isAuthLoading && !user) {
@@ -42,6 +50,8 @@ export default function ClientDashboard() {
       fetchAppointments();
       setProfileName(user?.user_metadata?.full_name || '');
       setProfilePhone(user?.user_metadata?.phone || '');
+      setProfileAvatar(user?.user_metadata?.avatar_url || '');
+      setNewEmail(user?.email || '');
     }
   }, [user]);
 
@@ -100,6 +110,7 @@ export default function ClientDashboard() {
         data: {
           full_name: profileName,
           phone: profilePhone,
+          avatar_url: profileAvatar,
         }
       });
       if (error) throw error;
@@ -108,6 +119,89 @@ export default function ClientDashboard() {
       toast.error(err.message || 'Failed to update profile');
     } finally {
       setIsSavingProfile(false);
+    }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_SIZE = 150;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height *= MAX_SIZE / width;
+            width = MAX_SIZE;
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width *= MAX_SIZE / height;
+            height = MAX_SIZE;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          setProfileAvatar(dataUrl);
+        }
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleUpdateEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newEmail === user?.email) return;
+    setIsSavingEmail(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ email: newEmail });
+      if (error) throw error;
+      toast.success('Confirmation email sent! Please check your new inbox to confirm.');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update email');
+    } finally {
+      setIsSavingEmail(false);
+    }
+  };
+
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+    setIsSavingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      toast.success('Password updated successfully');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update password');
+    } finally {
+      setIsSavingPassword(false);
     }
   };
 
@@ -155,51 +249,142 @@ export default function ClientDashboard() {
         </div>
 
         {activeTab === 'profile' ? (
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="p-6 sm:p-8">
-              <h2 className="text-xl font-bold text-slate-900 mb-6">Contact Information</h2>
-              <form onSubmit={handleUpdateProfile} className="space-y-6 max-w-lg">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
-                  <input
-                    type="text"
-                    value={profileName}
-                    onChange={(e) => setProfileName(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition-all"
-                    placeholder="Your Full Name"
-                  />
+          <div className="space-y-6">
+            {/* General Settings Box */}
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+              <div className="p-6 sm:p-8">
+                <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2"><User size={24} className="text-teal-600"/> General Profile</h2>
+                
+                <form onSubmit={handleUpdateProfile} className="max-w-lg space-y-6">
+                  <div className="flex items-center gap-6 mb-8">
+                    <div className="relative h-24 w-24 shrink-0">
+                      {profileAvatar ? (
+                           <img src={profileAvatar} alt="Profile" className="h-24 w-24 rounded-full object-cover border-4 border-slate-50" />
+                      ) : (
+                           <div className="h-24 w-24 rounded-full bg-slate-100 flex items-center justify-center border-4 border-slate-50 text-slate-400">
+                             <User size={40} />
+                           </div>
+                      )}
+                      <label className="absolute bottom-0 right-0 bg-white p-1.5 rounded-full shadow-md border border-slate-100 cursor-pointer hover:bg-slate-50 transition-colors text-slate-600">
+                        <Camera size={16} />
+                        <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                      </label>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-slate-900">Profile Picture</h3>
+                      <p className="text-sm text-slate-500">JPG, GIF or PNG. 2MB max.</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                    <input
+                      type="text"
+                      value={profileName}
+                      onChange={(e) => setProfileName(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition-all"
+                      placeholder="Your Full Name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+                    <input
+                      type="tel"
+                      value={profilePhone}
+                      onChange={(e) => setProfilePhone(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition-all"
+                      placeholder="e.g. +1 234 567 8900"
+                    />
+                  </div>
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={isSavingProfile}
+                      className="bg-teal-600 text-white px-8 py-3 rounded-xl font-bold disabled:opacity-70 flex justify-center items-center hover:bg-teal-700 transition-colors"
+                    >
+                      {isSavingProfile ? (
+                        <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                      ) : 'Save Updates'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            {/* Account Security Box */}
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+              <div className="p-6 sm:p-8">
+                <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2"><Lock size={24} className="text-teal-600"/> Account Security</h2>
+                
+                <div className="grid md:grid-cols-2 gap-8 md:gap-12 flex-col">
+                  {/* Email Section */}
+                  <form onSubmit={handleUpdateEmail} className="space-y-6">
+                    <div>
+                      <h3 className="font-semibold text-slate-900 mb-1 flex items-center gap-2"><Mail size={18} className="text-slate-400"/> Change Email Address</h3>
+                      <p className="text-xs text-amber-600 bg-amber-50 rounded-lg p-2 mb-4">Note: If you are on Supabase free tier, <strong>only 3 email changes per hour</strong> are allowed.</p>
+                      
+                      <label className="block text-sm font-medium text-slate-700 mb-1">New Email Address</label>
+                      <input
+                        type="email"
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition-all"
+                        placeholder="new@example.com"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={isSavingEmail || newEmail === user?.email}
+                      className="bg-slate-900 text-white px-6 py-2.5 rounded-xl font-medium disabled:opacity-70 hover:bg-slate-800 transition-colors inline-flex items-center"
+                    >
+                      {isSavingEmail ? (
+                        <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mx-6"></div>
+                      ) : 'Update Email'}
+                    </button>
+                  </form>
+
+                  {/* Password Section */}
+                  <form onSubmit={handleUpdatePassword} className="space-y-6 md:border-l md:border-slate-100 md:pl-12">
+                     <div>
+                      <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2"><Lock size={18} className="text-slate-400"/> Change Password</h3>
+                      
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">New Password</label>
+                          <input
+                            type="password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            minLength={6}
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition-all"
+                            placeholder="Min 6 characters"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">Confirm New Password</label>
+                          <input
+                            type="password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            minLength={6}
+                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition-all"
+                            placeholder="Confirm your new password"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={isSavingPassword || !newPassword || !confirmPassword}
+                      className="bg-slate-900 text-white px-6 py-2.5 rounded-xl font-medium disabled:opacity-70 hover:bg-slate-800 transition-colors inline-flex items-center"
+                    >
+                      {isSavingPassword ? (
+                        <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mx-8"></div>
+                      ) : 'Update Password'}
+                    </button>
+                  </form>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Email Address (Cannot be changed)</label>
-                  <input
-                    type="email"
-                    value={user?.email || ''}
-                    disabled
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
-                  <input
-                    type="tel"
-                    value={profilePhone}
-                    onChange={(e) => setProfilePhone(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition-all"
-                    placeholder="e.g. +1 234 567 8900"
-                  />
-                </div>
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    disabled={isSavingProfile}
-                    className="bg-teal-600 text-white px-8 py-3 rounded-xl font-bold disabled:opacity-70 flex justify-center items-center hover:bg-teal-700 transition-colors"
-                  >
-                    {isSavingProfile ? (
-                      <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
-                    ) : 'Save Changes'}
-                  </button>
-                </div>
-              </form>
+              </div>
             </div>
           </div>
         ) : (
