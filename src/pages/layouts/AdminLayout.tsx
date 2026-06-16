@@ -50,14 +50,15 @@ export default function AdminLayout() {
         </div>
         
         <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-          <Link
-            to="/"
+          <a
+            href="/"
             target="_blank"
+            rel="noopener noreferrer"
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors mb-4 border border-slate-200"
           >
             <ClinicIcon size={20} />
             View Live Website
-          </Link>
+          </a>
           
           <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-3">Management</div>
           
@@ -115,9 +116,9 @@ export default function AdminLayout() {
             <span className="font-semibold text-lg">Admin View</span>
           </div>
           <div className="flex items-center gap-4">
-            <Link to="/" target="_blank" className="text-sm font-medium text-slate-600 hover:text-teal-600 flex items-center gap-1">
+            <a href="/" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-slate-600 hover:text-teal-600 flex items-center gap-1">
               Live Site
-            </Link>
+            </a>
             <button onClick={logout} className="p-2 text-slate-500 hover:text-red-600">
               <LogOut size={20} />
             </button>

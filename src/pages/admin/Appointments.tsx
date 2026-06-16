@@ -12,6 +12,7 @@ export default function Appointments() {
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
+  const [appointmentToDelete, setAppointmentToDelete] = useState<Appointment | null>(null);
 
   useEffect(() => {
     fetchAppointments();
@@ -23,7 +24,6 @@ export default function Appointments() {
       const { data, error } = await supabase
         .from('appointments')
         .select('*, service:services(name)')
-        .neq('status', 'deleted')
         .order('appointment_date', { ascending: false })
         .order('start_time', { ascending: true });
 
@@ -77,8 +77,10 @@ export default function Appointments() {
     }
   };
 
-  const deleteAppointment = async (appointment: Appointment) => {
-    if (!window.confirm('Are you sure you want to delete this appointment?')) return;
+  const confirmDelete = async () => {
+    if (!appointmentToDelete) return;
+    const appointment = appointmentToDelete;
+    setAppointmentToDelete(null);
     try {
       // First try to add a notification for the patient (if table exists)
       try {
@@ -95,15 +97,17 @@ export default function Appointments() {
       const html = `<h2>Appointment Cancelled</h2><p>Hello ${appointment.full_name},</p><p>Your appointment on <strong>${format(new Date(appointment.appointment_date), 'MMMM do, yyyy')}</strong> at <strong>${appointment.start_time.substring(0,5)}</strong> has been cancelled and removed.</p><p>Please contact us for more details.</p>`;
       await sendEmailNotification(appointment.email, 'Appointment Cancelled', html);
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('appointments')
-        .update({ status: 'deleted' })
-        .eq('id', appointment.id);
+        .delete()
+        .eq('id', appointment.id)
+        .select();
 
       if (error) throw error;
       
-      // Also physically delete it if possible
-      await supabase.from('appointments').delete().eq('id', appointment.id);
+      if (!data || data.length === 0) {
+        throw new Error('Database refused deletion. Please enable DELETE permissions (RLS) for appointments table in Supabase.');
+      }
       
       toast.success('Appointment deleted successfully');
       fetchAppointments();
@@ -330,7 +334,7 @@ export default function Appointments() {
                                 <option value="cancelled">Cancel Appt</option>
                               </select>
                               <button 
-                                onClick={() => deleteAppointment(appt)}
+                                onClick={() => setAppointmentToDelete(appt)}
                                 className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                                 title="Delete Appointment"
                               >
@@ -349,6 +353,32 @@ export default function Appointments() {
                   )}
                 </tbody>
              </table>
+          </div>
+        </div>
+      )}
+      
+      {/* Delete Confirmation Modal */}
+      {appointmentToDelete && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl">
+            <h3 className="text-lg font-bold text-slate-900 mb-2">Delete Appointment</h3>
+            <p className="text-slate-600 mb-6">
+              Are you sure you want to delete the appointment for <strong>{appointmentToDelete.full_name}</strong>? This action cannot be undone.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setAppointmentToDelete(null)}
+                className="px-4 py-2 font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors"
+              >
+                Delete Appointment
+              </button>
+            </div>
           </div>
         </div>
       )}

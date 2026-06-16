@@ -45,7 +45,6 @@ export default function ClientDashboard() {
         .from('appointments')
         .select('*, service:services(name, duration_minutes)')
         .eq('email', user?.email)
-        .neq('status', 'deleted')
         .order('appointment_date', { ascending: false })
         .order('start_time', { ascending: true });
 
