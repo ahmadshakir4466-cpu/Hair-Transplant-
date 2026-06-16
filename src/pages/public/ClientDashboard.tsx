@@ -6,6 +6,7 @@ import { Appointment } from '../../types';
 import { Calendar, Clock, MapPin, X, Bell, Printer } from 'lucide-react';
 import { format, isFuture, isToday } from 'date-fns';
 import { useApp } from '../../contexts/AppContext';
+import jsPDF from 'jspdf';
 
 export default function ClientDashboard() {
   const { user, isLoading: isAuthLoading } = useAuth();
@@ -199,43 +200,31 @@ export default function ClientDashboard() {
                       </div>
                       <button
                         onClick={() => {
-                          const slipContent = `
-                            <html>
-                              <head>
-                                <title>Appointment Slip - ${appt.full_name}</title>
-                                <style>
-                                  body { font-family: sans-serif; padding: 40px; color: #333; max-width: 600px; margin: auto; }
-                                  .header { text-align: center; border-bottom: 2px solid #0d9488; padding-bottom: 20px; margin-bottom: 30px; }
-                                  h1 { color: #0f766e; }
-                                  .details { line-height: 1.8; font-size: 16px; margin-bottom: 40px; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; }
-                                  .footer { font-size: 12px; color: #666; text-align: center; margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; }
-                                </style>
-                              </head>
-                              <body>
-                                <div class="header">
-                                  <h1>${clinicSettings?.clinic_name || 'Clinic'}</h1>
-                                  <h2>Official Appointment Slip</h2>
-                                </div>
-                                <div class="details">
-                                  <strong>Patient Name:</strong> ${appt.full_name}<br>
-                                  <strong>Service details:</strong> ${appt.service?.name}<br>
-                                  <strong>Appointment Date:</strong> ${format(new Date(appt.appointment_date), 'MMMM do, yyyy')}<br>
-                                  <strong>Start Time:</strong> ${formatTime(appt.start_time)}<br>
-                                  <strong>Status:</strong> <span style="color: #059669; font-weight: bold;">Confirmed</span>
-                                </div>
-                                <div class="footer">
-                                  Please arrive at least 10 minutes prior to your scheduled time.<br>
-                                  ${clinicSettings?.clinic_address ? clinicSettings.clinic_address : ''}
-                                </div>
-                                <script>
-                                  window.onload = function() { window.print(); }
-                                </script>
-                              </body>
-                            </html>
-                          `;
-                          const blob = new Blob([slipContent], { type: 'text/html' });
-                          const url = URL.createObjectURL(blob);
-                          window.open(url, '_blank');
+                          const doc = new jsPDF();
+                          doc.setFillColor(13, 148, 136); // Teal header
+                          doc.rect(0, 0, 210, 40, 'F');
+                          doc.setTextColor(255, 255, 255);
+                          doc.setFontSize(22);
+                          doc.text(clinicSettings?.clinic_name || 'Clinic', 105, 20, { align: 'center' });
+                          doc.setFontSize(16);
+                          doc.text('Official Appointment Slip', 105, 30, { align: 'center' });
+                          
+                          doc.setTextColor(51, 51, 51);
+                          doc.setFontSize(12);
+                          
+                          let y = 60;
+                          doc.text(`Patient Name: ${appt.full_name}`, 20, y); y += 10;
+                          doc.text(`Service: ${appt.service?.name || ''}`, 20, y); y += 10;
+                          doc.text(`Date: ${format(new Date(appt.appointment_date), 'MMMM do, yyyy')}`, 20, y); y += 10;
+                          doc.text(`Start Time: ${formatTime(appt.start_time)}`, 20, y); y += 10;
+                          doc.text(`Status: Confirmed`, 20, y);
+                          
+                          doc.setFontSize(10);
+                          doc.setTextColor(102, 102, 102);
+                          doc.text('Please arrive at least 10 minutes prior to your scheduled time.', 105, 270, { align: 'center' });
+                          doc.text(clinicSettings?.clinic_address || '', 105, 275, { align: 'center' });
+                          
+                          doc.save(`Appointment_Slip_${format(new Date(appt.appointment_date), 'yyyy-MM-dd')}.pdf`);
                         }}
                         className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-sm font-medium hover:bg-slate-800 transition-colors"
                       >
