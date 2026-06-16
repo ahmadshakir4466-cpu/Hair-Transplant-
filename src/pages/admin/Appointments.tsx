@@ -23,6 +23,7 @@ export default function Appointments() {
       const { data, error } = await supabase
         .from('appointments')
         .select('*, service:services(name)')
+        .neq('status', 'deleted')
         .order('appointment_date', { ascending: false })
         .order('start_time', { ascending: true });
 
@@ -96,10 +97,14 @@ export default function Appointments() {
 
       const { error } = await supabase
         .from('appointments')
-        .delete()
+        .update({ status: 'deleted' })
         .eq('id', appointment.id);
 
       if (error) throw error;
+      
+      // Also physically delete it if possible
+      await supabase.from('appointments').delete().eq('id', appointment.id);
+      
       toast.success('Appointment deleted successfully');
       fetchAppointments();
     } catch (err: any) {

@@ -50,6 +50,17 @@ export default function AdminLayout() {
         </div>
         
         <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+          <Link
+            to="/"
+            target="_blank"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors mb-4 border border-slate-200"
+          >
+            <ClinicIcon size={20} />
+            View Live Website
+          </Link>
+          
+          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-3">Management</div>
+          
           {navItems.map((item) => {
             const isActive = location.pathname === item.path || 
               (item.path !== '/admin' && location.pathname.startsWith(item.path));
@@ -103,9 +114,14 @@ export default function AdminLayout() {
             <ClinicIcon size={24} />
             <span className="font-semibold text-lg">Admin View</span>
           </div>
-          <button onClick={logout} className="p-2 text-slate-500 hover:text-red-600">
-            <LogOut size={20} />
-          </button>
+          <div className="flex items-center gap-4">
+            <Link to="/" target="_blank" className="text-sm font-medium text-slate-600 hover:text-teal-600 flex items-center gap-1">
+              Live Site
+            </Link>
+            <button onClick={logout} className="p-2 text-slate-500 hover:text-red-600">
+              <LogOut size={20} />
+            </button>
+          </div>
         </header>
 
         {/* Page Content */}
