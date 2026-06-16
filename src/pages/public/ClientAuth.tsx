@@ -40,7 +40,7 @@ export default function ClientAuth() {
         toast.success("Welcome back!");
         navigate('/my-appointments');
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -50,8 +50,14 @@ export default function ClientAuth() {
           }
         });
         if (error) throw error;
-        toast.success("Account created successfully! You are now logged in.");
-        navigate('/my-appointments');
+        
+        if (data.user && data.session === null) {
+          toast.success("Account created! Please check your email inbox to verify your account before logging in.", { duration: 6000 });
+          setIsLogin(true);
+        } else {
+          toast.success("Account created successfully! You are now logged in.");
+          navigate('/my-appointments');
+        }
       }
     } catch (err: any) {
       toast.error(err.message || "An unexpected error occurred.");
