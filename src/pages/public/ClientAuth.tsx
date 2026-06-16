@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 export default function ClientAuth() {
   const [isLogin, setIsLogin] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [isVerificationSent, setIsVerificationSent] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -76,8 +77,7 @@ export default function ClientAuth() {
         if (error) throw error;
         
         if (data.user && data.session === null) {
-          toast.success("Account created! Please check your email inbox to verify your account before logging in.", { duration: 6000 });
-          setIsLogin(true);
+          setIsVerificationSent(true);
         } else {
           toast.success("Account created successfully! You are now logged in.");
           navigate('/my-appointments');
@@ -146,6 +146,34 @@ export default function ClientAuth() {
               Back to Login
             </button>
           </form>
+        </div>
+      </div>
+    );
+  }
+
+  if (isVerificationSent) {
+    return (
+      <div className="min-h-[80vh] bg-slate-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-xl shadow-slate-200/50 p-8 border border-slate-100 text-center">
+          <div className="flex justify-center mb-6">
+            <div className="bg-teal-50 p-4 rounded-2xl text-teal-600">
+              <Mail size={32} />
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">Check Your Email</h1>
+          <p className="text-slate-500 mb-8">
+            We've sent a verification link to <span className="font-semibold text-slate-700">{email}</span>. 
+            Please check your inbox and confirm your email address to active your account.
+          </p>
+          <button
+            onClick={() => {
+              setIsVerificationSent(false);
+              setIsLogin(true);
+            }}
+            className="w-full bg-teal-600 text-white px-8 py-3.5 rounded-xl font-bold flex justify-center items-center hover:bg-teal-700 transition-colors shadow-lg shadow-teal-200"
+          >
+            Back to Sign In
+          </button>
         </div>
       </div>
     );
