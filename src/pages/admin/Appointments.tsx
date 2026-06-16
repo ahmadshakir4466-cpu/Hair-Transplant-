@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Appointment } from '../../types';
 import { format } from 'date-fns';
-import { Filter, Calendar, Search, MapPin, Phone, Mail, FileText } from 'lucide-react';
+import { Filter, Calendar, Search, MapPin, Phone, Mail, FileText, Download, Trash2, Printer } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function Appointments() {
@@ -49,6 +49,57 @@ export default function Appointments() {
     }
   };
 
+  const deleteAppointment = async (id: string, email: string, date: string) => {
+    if (!window.confirm('Are you sure you want to delete this appointment?')) return;
+    try {
+      // First try to add a notification for the patient (if table exists)
+      try {
+        await supabase.from('notifications').insert({
+          email: email,
+          message: `Your appointment on ${date} has been cancelled and removed by the administrator.`,
+          created_at: new Date().toISOString()
+        });
+      } catch (e) {
+        // Ignore if notifications table doesn't exist
+      }
+
+      const { error } = await supabase
+        .from('appointments')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      toast.success('Appointment deleted successfully');
+      fetchAppointments();
+    } catch (err) {
+      toast.error('Failed to delete appointment.');
+    }
+  };
+
+  const exportCSV = () => {
+    if (filteredAppointments.length === 0) {
+      toast.error('No appointments to export.');
+      return;
+    }
+    
+    const headers = ['Patient Name', 'Email', 'Phone', 'Service', 'Date', 'Time', 'Status', 'Notes'];
+    const csvContent = [
+      headers.join(','),
+      ...filteredAppointments.map(a => 
+        `"${a.full_name}","${a.email}","${a.phone}","${a.service?.name}","${a.appointment_date}","${a.start_time}","${a.status}","${(a.notes || '').replace(/"/g, '""')}"`
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `appointments_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const filteredAppointments = appointments.filter(appt => {
     const matchesFilter = filter === 'all' || appt.status === filter;
     const matchesSearch = appt.full_name.toLowerCase().includes(search.toLowerCase()) || 
@@ -75,6 +126,13 @@ export default function Appointments() {
         </div>
         
         <div className="flex items-center gap-3">
+           <button 
+             onClick={exportCSV}
+             className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors"
+           >
+             <Download size={16} />
+             Export CSV
+           </button>
            <div className="relative">
              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
              <input 
@@ -149,16 +207,72 @@ export default function Appointments() {
                             </span>
                          </td>
                          <td className="px-6 py-4 text-right">
-                            <select 
-                              value={appt.status}
-                              onChange={(e) => updateStatus(appt.id, e.target.value)}
-                              className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white text-slate-700 outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer"
-                            >
-                              <option value="pending">Mark Pending</option>
-                              <option value="confirmed">Mark Confirmed</option>
-                              <option value="completed">Mark Completed</option>
-                              <option value="cancelled">Cancel Appt</option>
-                            </select>
+                            <div className="flex items-center justify-end gap-2">
+                              {appt.status === 'confirmed' && (
+                                <button 
+                                  onClick={() => window.open(`/api/print-slip?id=${appt.id}`, '_blank')}
+                                  title="Print Confirmed Slip"
+                                  className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded transition-colors"
+                                  onClickCapture={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    const slipContent = `
+                                      <html>
+                                        <head>
+                                          <title>Appointment Slip - ${appt.full_name}</title>
+                                          <style>
+                                            body { font-family: sans-serif; padding: 40px; color: #333; }
+                                            .header { text-align: center; border-bottom: 2px solid #0d9488; padding-bottom: 20px; margin-bottom: 30px; }
+                                            h1 { color: #0f766e; }
+                                            .details { line-height: 1.8; font-size: 16px; margin-bottom: 40px; }
+                                            .footer { font-size: 12px; color: #666; text-align: center; margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; }
+                                          </style>
+                                        </head>
+                                        <body>
+                                          <div class="header">
+                                            <h1>Appointment Confirmation</h1>
+                                            <p>This is an official confirmation of your scheduled visit.</p>
+                                          </div>
+                                          <div class="details">
+                                            <strong>Patient Name:</strong> ${appt.full_name}<br>
+                                            <strong>Service:</strong> ${appt.service?.name}<br>
+                                            <strong>Date:</strong> ${format(new Date(appt.appointment_date), 'MMMM do, yyyy')}<br>
+                                            <strong>Time:</strong> ${appt.start_time.substring(0,5)}<br>
+                                            <strong>Status:</strong> <span style="color: #059669; font-weight: bold;">Confirmed</span>
+                                          </div>
+                                          <div class="footer">
+                                            Please arrive 10 minutes prior to your appointment time.
+                                          </div>
+                                        </body>
+                                      </html>
+                                    `;
+                                    const win = window.open('', '_blank');
+                                    win?.document.write(slipContent);
+                                    win?.document.close();
+                                    setTimeout(() => win?.print(), 500);
+                                  }}
+                                >
+                                  <Printer size={16} />
+                                </button>
+                              )}
+                              <select 
+                                value={appt.status}
+                                onChange={(e) => updateStatus(appt.id, e.target.value)}
+                                className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white text-slate-700 outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer"
+                              >
+                                <option value="pending">Mark Pending</option>
+                                <option value="confirmed">Mark Confirmed</option>
+                                <option value="completed">Mark Completed</option>
+                                <option value="cancelled">Cancel Appt</option>
+                              </select>
+                              <button 
+                                onClick={() => deleteAppointment(appt.id, appt.email, appt.appointment_date)}
+                                className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                                title="Delete Appointment"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
                          </td>
                        </tr>
                     ))
