@@ -3,10 +3,11 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Appointment } from '../../types';
-import { Calendar, Clock, MapPin, X, Bell, Printer } from 'lucide-react';
-import { format, isFuture, isToday } from 'date-fns';
+import { Calendar, MapPin, X, Bell, Printer, User, History } from 'lucide-react';
+import { format } from 'date-fns';
 import { useApp } from '../../contexts/AppContext';
 import jsPDF from 'jspdf';
+import toast from 'react-hot-toast';
 
 export default function ClientDashboard() {
   const { user, isLoading: isAuthLoading } = useAuth();
@@ -16,6 +17,10 @@ export default function ClientDashboard() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [dismissedNotifs, setDismissedNotifs] = useState<Record<string, boolean>>({});
+  const [activeTab, setActiveTab] = useState<'appointments' | 'profile'>('appointments');
+  const [profileName, setProfileName] = useState(user?.user_metadata?.full_name || '');
+  const [profilePhone, setProfilePhone] = useState(user?.user_metadata?.phone || '');
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   useEffect(() => {
     if (!isAuthLoading && !user) {
@@ -35,8 +40,10 @@ export default function ClientDashboard() {
   useEffect(() => {
     if (user?.email) {
       fetchAppointments();
+      setProfileName(user?.user_metadata?.full_name || '');
+      setProfilePhone(user?.user_metadata?.phone || '');
     }
-  }, [user?.email]);
+  }, [user]);
 
   const fetchAppointments = async () => {
     setIsLoading(true);
@@ -85,6 +92,25 @@ export default function ClientDashboard() {
     }
   };
 
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingProfile(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        data: {
+          full_name: profileName,
+          phone: profilePhone,
+        }
+      });
+      if (error) throw error;
+      toast.success('Profile updated successfully');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update profile');
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
+
   if (isAuthLoading || isLoading) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
@@ -98,12 +124,87 @@ export default function ClientDashboard() {
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <div className="mb-10">
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">My Appointments</h1>
-          <p className="text-slate-500">Track and manage your upcoming visits.</p>
+        <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">My Appointments</h1>
+            <p className="text-slate-500">Track and manage your upcoming visits.</p>
+          </div>
+          <button 
+            onClick={() => supabase.auth.signOut()}
+            className="text-slate-500 hover:text-slate-800 font-medium text-sm px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-200 self-start sm:self-auto"
+          >
+            Sign Out
+          </button>
         </div>
 
-        {/* Notifications for upcoming confirmed appointments */}
+        <div className="bg-white p-1.5 rounded-2xl shadow-sm border border-slate-100 flex items-center mb-8 inline-flex">
+          <button
+            onClick={() => setActiveTab('appointments')}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-medium text-sm transition-all ${activeTab === 'appointments' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`}
+          >
+            <History size={18} />
+            Appointments
+          </button>
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-medium text-sm transition-all ${activeTab === 'profile' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`}
+          >
+            <User size={18} />
+            Patient Profile
+          </button>
+        </div>
+
+        {activeTab === 'profile' ? (
+          <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div className="p-6 sm:p-8">
+              <h2 className="text-xl font-bold text-slate-900 mb-6">Contact Information</h2>
+              <form onSubmit={handleUpdateProfile} className="space-y-6 max-w-lg">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                  <input
+                    type="text"
+                    value={profileName}
+                    onChange={(e) => setProfileName(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition-all"
+                    placeholder="Your Full Name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Email Address (Cannot be changed)</label>
+                  <input
+                    type="email"
+                    value={user?.email || ''}
+                    disabled
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+                  <input
+                    type="tel"
+                    value={profilePhone}
+                    onChange={(e) => setProfilePhone(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition-all"
+                    placeholder="e.g. +1 234 567 8900"
+                  />
+                </div>
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={isSavingProfile}
+                    className="bg-teal-600 text-white px-8 py-3 rounded-xl font-bold disabled:opacity-70 flex justify-center items-center hover:bg-teal-700 transition-colors"
+                  >
+                    {isSavingProfile ? (
+                      <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                    ) : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Notifications for upcoming confirmed appointments */}
         <div className="space-y-4 mb-8">
           {appointments.map(appt => {
             if (appt.status !== 'confirmed') return null;
@@ -252,6 +353,8 @@ export default function ClientDashboard() {
             </div>
           )}
         </div>
+          </>
+        )}
       </div>
     </div>
   );
