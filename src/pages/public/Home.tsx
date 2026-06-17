@@ -67,21 +67,25 @@ export default function Home() {
 
         <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full transition-opacity duration-1000 ${isLoadingSettings ? 'opacity-0' : 'opacity-100'}`}>
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 text-teal-700 font-medium text-sm mb-6 border border-teal-100">
-              <Star size={14} className="fill-current" />
-              <span>{clinicSettings?.hero_title || 'Premium Hair Transplant'}</span>
-            </div>
+            {(clinicSettings?.hero_title ?? 'Premium Hair Transplant') && (
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 text-teal-700 font-medium text-sm mb-6 border border-teal-100">
+                <Star size={14} className="fill-current" />
+                <span>{clinicSettings?.hero_title ?? 'Premium Hair Transplant'}</span>
+              </div>
+            )}
             <h1 className="text-5xl md:text-7xl font-sans font-bold text-slate-900 tracking-tight leading-tight mb-6">
-              {clinicSettings?.hero_subtitle ? (
+              {clinicSettings?.hero_subtitle != null ? (
                  <div dangerouslySetInnerHTML={{ __html: clinicSettings.hero_subtitle.replace('\n', '<br/>') }} />
               ) : (
                 <>Experience restoration <br/>
                 <span className="text-teal-600">reimagined.</span></>
               )}
             </h1>
-            <p className="text-lg md:text-xl text-slate-600 mb-10 leading-relaxed max-w-lg whitespace-pre-wrap">
-              {clinicSettings?.hero_description || 'State-of-the-art technology meets compassionate care. We are dedicated to providing you with a comfortable, stress-free experience and natural-looking results.'}
-            </p>
+            {(clinicSettings?.hero_description ?? 'State-of-the-art technology meets compassionate care. We are dedicated to providing you with a comfortable, stress-free experience and natural-looking results.') && (
+              <p className="text-lg md:text-xl text-slate-600 mb-10 leading-relaxed max-w-lg whitespace-pre-wrap">
+                {clinicSettings?.hero_description ?? 'State-of-the-art technology meets compassionate care. We are dedicated to providing you with a comfortable, stress-free experience and natural-looking results.'}
+              </p>
+            )}
             <div className="flex flex-col sm:flex-row gap-4">
               <Link 
                 to="/book" 
@@ -224,26 +228,32 @@ export default function Home() {
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-medium text-sm mb-6">
                 Our Practice
               </div>
-              <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight leading-tight">
-                {clinicSettings?.about_title || 'A modern approach to your hair health.'}
-              </h2>
+              {(clinicSettings?.about_title ?? 'A modern approach to your hair health.') && (
+                <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight leading-tight">
+                  {clinicSettings?.about_title ?? 'A modern approach to your hair health.'}
+                </h2>
+              )}
               <div className="space-y-6 text-lg text-slate-600 whitespace-pre-wrap">
-                <p>
-                  {clinicSettings?.about_description_1 || `At ${clinicName}, we believe that a visit to our clinic should be an experience you actually look forward to. We've thoughtfully designed every detail of our practice to promote calm, comfort, and clinical excellence.`}
-                </p>
-                <p>
-                  {clinicSettings?.about_description_2 || 'Our modern facility is equipped with state-of-the-art technology, ensuring that every diagnosis is precise and every treatment is as minimally invasive as possible. From the moment you walk through our doors, your comfort is our priority.'}
-                </p>
+                {(clinicSettings?.about_description_1 ?? `At ${clinicName}, we believe that a visit to our clinic should be an experience you actually look forward to. We've thoughtfully designed every detail of our practice to promote calm, comfort, and clinical excellence.`) && (
+                  <p>
+                    {clinicSettings?.about_description_1 ?? `At ${clinicName}, we believe that a visit to our clinic should be an experience you actually look forward to. We've thoughtfully designed every detail of our practice to promote calm, comfort, and clinical excellence.`}
+                  </p>
+                )}
+                {(clinicSettings?.about_description_2 ?? 'Our modern facility is equipped with state-of-the-art technology, ensuring that every diagnosis is precise and every treatment is as minimally invasive as possible. From the moment you walk through our doors, your comfort is our priority.') && (
+                  <p>
+                    {clinicSettings?.about_description_2 ?? 'Our modern facility is equipped with state-of-the-art technology, ensuring that every diagnosis is precise and every treatment is as minimally invasive as possible. From the moment you walk through our doors, your comfort is our priority.'}
+                  </p>
+                )}
               </div>
               
               <div className="mt-10 grid grid-cols-2 gap-6 pt-10 border-t border-slate-100">
                 <div>
-                  <h4 className="text-4xl font-bold text-teal-600 mb-2">{clinicSettings?.about_stats_1_value || '15+'}</h4>
-                  <p className="text-slate-600 font-medium">{clinicSettings?.about_stats_1_label || 'Years of Excellence'}</p>
+                  <h4 className="text-4xl font-bold text-teal-600 mb-2">{clinicSettings?.about_stats_1_value ?? '15+'}</h4>
+                  <p className="text-slate-600 font-medium">{clinicSettings?.about_stats_1_label ?? 'Years of Excellence'}</p>
                 </div>
                 <div>
-                  <h4 className="text-4xl font-bold text-teal-600 mb-2">{clinicSettings?.about_stats_2_value || '5k+'}</h4>
-                  <p className="text-slate-600 font-medium">{clinicSettings?.about_stats_2_label || 'Happy Patients'}</p>
+                  <h4 className="text-4xl font-bold text-teal-600 mb-2">{clinicSettings?.about_stats_2_value ?? '5k+'}</h4>
+                  <p className="text-slate-600 font-medium">{clinicSettings?.about_stats_2_label ?? 'Happy Patients'}</p>
                 </div>
               </div>
             </div>

@@ -121,7 +121,7 @@ export default function PublicLayout() {
                 <span className="font-medium text-xl text-white tracking-tight">{clinicName}</span>
               </div>
               <p className="text-slate-400 max-w-sm leading-relaxed">
-                {clinicSettings?.footer_description || 'Premium care focused on comfort, precision, and lifelong results in a state-of-the-art environment.'}
+                {clinicSettings?.footer_description ?? 'Premium care focused on comfort, precision, and lifelong results in a state-of-the-art environment.'}
               </p>
             </div>
             

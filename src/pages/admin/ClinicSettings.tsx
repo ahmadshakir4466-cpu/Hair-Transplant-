@@ -238,7 +238,7 @@ export default function ClinicSettingsPage() {
                     type="text" 
                     value={settings.clinic_name}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none max-w-md"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all max-w-md"
                   />
                 </div>
                 <div>
@@ -249,7 +249,7 @@ export default function ClinicSettingsPage() {
                     type="email" 
                     value={settings.clinic_email}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                   />
                 </div>
                 <div>
@@ -260,7 +260,7 @@ export default function ClinicSettingsPage() {
                     type="tel" 
                     value={settings.clinic_phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                   />
                 </div>
                 <div className="md:col-span-2">
@@ -271,7 +271,7 @@ export default function ClinicSettingsPage() {
                     type="text" 
                     value={settings.clinic_address}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                   />
                 </div>
              </div>
@@ -291,7 +291,7 @@ export default function ClinicSettingsPage() {
                     step="5"
                     value={settings.slot_interval_minutes}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                   />
                   <p className="text-xs text-slate-500 mt-2">Time between available booking slots on the calendar.</p>
                 </div>
@@ -304,7 +304,7 @@ export default function ClinicSettingsPage() {
                     min="0"
                     value={settings.booking_notice_hours}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                   />
                   <p className="text-xs text-slate-500 mt-2">How far in advance a patient must book before the appointment time.</p>
                 </div>
@@ -323,7 +323,7 @@ export default function ClinicSettingsPage() {
                       placeholder="Premium Dental Care"
                       value={settings.hero_title || ''}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                     />
                   </div>
                   <div>
@@ -334,7 +334,7 @@ export default function ClinicSettingsPage() {
                       placeholder="Experience dentistry reimagined."
                       value={settings.hero_subtitle || ''}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                     />
                   </div>
                 </div>
@@ -346,7 +346,7 @@ export default function ClinicSettingsPage() {
                     placeholder="State-of-the-art technology meets compassionate care..."
                     value={settings.hero_description || ''}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                   />
                 </div>
                 
@@ -359,7 +359,7 @@ export default function ClinicSettingsPage() {
                     placeholder="A modern approach to your oral health."
                     value={settings.about_title || ''}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                   />
                 </div>
                 <div>
@@ -370,7 +370,7 @@ export default function ClinicSettingsPage() {
                     placeholder="At our clinic, we believe..."
                     value={settings.about_description_1 || ''}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                   />
                 </div>
                 <div>
@@ -381,7 +381,7 @@ export default function ClinicSettingsPage() {
                     placeholder="Our modern facility is equipped..."
                     value={settings.about_description_2 || ''}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                   />
                 </div>
 
@@ -394,7 +394,7 @@ export default function ClinicSettingsPage() {
                       placeholder="15+"
                       value={settings.about_stats_1_value || ''}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                     />
                   </div>
                   <div>
@@ -405,7 +405,7 @@ export default function ClinicSettingsPage() {
                       placeholder="Years of Excellence"
                       value={settings.about_stats_1_label || ''}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                     />
                   </div>
                   <div>
@@ -416,7 +416,7 @@ export default function ClinicSettingsPage() {
                       placeholder="5k+"
                       value={settings.about_stats_2_value || ''}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                     />
                   </div>
                   <div>
@@ -427,7 +427,7 @@ export default function ClinicSettingsPage() {
                       placeholder="Happy Patients"
                       value={settings.about_stats_2_label || ''}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                     />
                   </div>
                 </div>
@@ -441,7 +441,7 @@ export default function ClinicSettingsPage() {
                     placeholder="Premium care focused on comfort..."
                     value={settings.footer_description || ''}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 outline-none placeholder:text-slate-400 placeholder:opacity-[0.45] transition-all"
                   />
                 </div>
              </div>

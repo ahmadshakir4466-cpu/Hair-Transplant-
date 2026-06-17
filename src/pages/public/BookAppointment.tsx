@@ -23,6 +23,9 @@ export default function BookAppointment() {
   const [selectedSlot, setSelectedSlot] = useState<{start: Date, end: Date, label: string} | null>(null);
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
 
+  const [unavailableDates, setUnavailableDates] = useState<Record<string, boolean>>({});
+  const [closedWeekdays, setClosedWeekdays] = useState<number[]>([]);
+
   // Form State
   const [formData, setFormData] = useState({
     fullName: user?.user_metadata?.full_name || '',
@@ -46,6 +49,34 @@ export default function BookAppointment() {
       }));
     }
   }, [user]);
+
+  useEffect(() => {
+    const fetchGlobalAvailability = async () => {
+      if (!isSupabaseConfigured) return;
+      
+      const { data: blockedData } = await supabase
+        .from('blocked_dates')
+        .select('blocked_date');
+        
+      if (blockedData) {
+        const bdRecord: Record<string, boolean> = {};
+        blockedData.forEach((r: any) => {
+           bdRecord[r.blocked_date] = true;
+        });
+        setUnavailableDates(bdRecord);
+      }
+
+      const { data: hoursData } = await supabase
+        .from('business_hours')
+        .select('*');
+        
+      if (hoursData) {
+        const closedDays = hoursData.filter((r: any) => !r.is_open).map((r: any) => r.weekday);
+        setClosedWeekdays(closedDays);
+      }
+    };
+    fetchGlobalAvailability();
+  }, []);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -287,7 +318,12 @@ export default function BookAppointment() {
                   <Calendar className="text-teal-600" /> Select Date
                 </h3>
                  <div className="flex gap-3 overflow-x-auto pb-4 snap-x hide-scrollbar">
-                  {nextDays.map((date) => (
+                  {nextDays.map((date) => {
+                    const dateStr = format(date, 'yyyy-MM-dd');
+                    const dayOfWeek = getDay(date);
+                    const isUnavailable = unavailableDates[dateStr] || closedWeekdays.includes(dayOfWeek);
+
+                    return (
                     <button
                       key={date.toISOString()}
                       onClick={() => {
@@ -295,16 +331,18 @@ export default function BookAppointment() {
                         setSelectedSlot(null);
                       }}
                       className={`min-w-[4.5rem] flex flex-col items-center justify-center p-3 rounded-2xl border-2 snap-start transition-all ${
-                        selectedDate && isSameDay(selectedDate, date)
-                          ? 'border-teal-500 bg-teal-50 text-teal-700 ring-4 ring-teal-500/10'
-                          : 'border-slate-100 bg-white text-slate-600 hover:border-teal-200'
+                        isUnavailable
+                          ? 'border-red-200 bg-red-50 text-red-500'
+                          : selectedDate && isSameDay(selectedDate, date)
+                            ? 'border-teal-500 bg-teal-50 text-teal-700 ring-4 ring-teal-500/10'
+                            : 'border-slate-100 bg-white text-slate-600 hover:border-teal-200'
                       }`}
                     >
                       <span className="text-xs font-semibold uppercase">{format(date, 'eee')}</span>
                       <span className="text-xl font-bold my-1">{format(date, 'd')}</span>
                       <span className="text-xs">{format(date, 'MMM')}</span>
                     </button>
-                  ))}
+                  )})}
                 </div>
               </div>
 
