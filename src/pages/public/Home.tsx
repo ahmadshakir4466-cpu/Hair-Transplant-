@@ -4,6 +4,7 @@ import { useApp } from '../../contexts/AppContext';
 import { useEffect, useState } from 'react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { Service } from '../../types';
+import PatientTestimonials from '../../components/PatientTestimonials';
 
 export default function Home() {
   const { clinicSettings, isLoadingSettings } = useApp();
@@ -259,6 +260,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Patient Testimonials */}
+      <PatientTestimonials />
 
       {/* Service Details Modal */}
       {selectedService && (

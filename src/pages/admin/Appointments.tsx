@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Appointment } from '../../types';
 import { format } from 'date-fns';
-import { Filter, Calendar, Search, MapPin, Phone, Mail, FileText, Download, Trash2, Printer, FileDown, Plus, Edit2 } from 'lucide-react';
+import { Filter, Calendar, Search, MapPin, Phone, Mail, FileText, Download, Trash2, Printer, FileDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import AdminAppointmentModal from '../../components/AdminAppointmentModal';
 
 export default function Appointments() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -14,9 +13,6 @@ export default function Appointments() {
   const [filter, setFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [appointmentToDelete, setAppointmentToDelete] = useState<Appointment | null>(null);
-  
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [appointmentToEdit, setAppointmentToEdit] = useState<Appointment | undefined>();
 
   useEffect(() => {
     fetchAppointments();
@@ -225,16 +221,6 @@ export default function Appointments() {
         
         <div className="flex flex-wrap items-center gap-3">
            <button 
-             onClick={() => {
-               setAppointmentToEdit(undefined);
-               setIsModalOpen(true);
-             }}
-             className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white hover:bg-teal-700 rounded-lg text-sm font-medium transition-colors"
-           >
-             <Plus size={16} />
-             New Appointment
-           </button>
-           <button 
              onClick={exportPDF}
              className="hidden sm:flex items-center gap-2 px-4 py-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors"
              title="Download PDF Summary"
@@ -347,23 +333,6 @@ export default function Appointments() {
                                 <option value="completed">Mark Completed</option>
                                 <option value="cancelled">Cancel Appt</option>
                               </select>
-                              <button
-                                onClick={() => downloadSlipPDF(appt)}
-                                className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded transition-colors"
-                                title="Download Slip"
-                              >
-                                <Download size={16} />
-                              </button>
-                              <button 
-                                onClick={() => {
-                                  setAppointmentToEdit(appt);
-                                  setIsModalOpen(true);
-                                }}
-                                className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                                title="Edit Appointment"
-                              >
-                                <Edit2 size={16} />
-                              </button>
                               <button 
                                 onClick={() => setAppointmentToDelete(appt)}
                                 className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
@@ -413,13 +382,6 @@ export default function Appointments() {
           </div>
         </div>
       )}
-
-      <AdminAppointmentModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSuccess={fetchAppointments}
-        appointment={appointmentToEdit}
-      />
     </div>
   );
 }

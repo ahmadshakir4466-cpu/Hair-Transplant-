@@ -326,17 +326,16 @@ export default function BookAppointment() {
                     return (
                     <button
                       key={date.toISOString()}
-                      disabled={isUnavailable}
                       onClick={() => {
                         setSelectedDate(date);
                         setSelectedSlot(null);
                       }}
                       className={`min-w-[4.5rem] flex flex-col items-center justify-center p-3 rounded-2xl border-2 snap-start transition-all ${
                         isUnavailable
-                          ? 'border-red-200 bg-red-50 text-red-500 opacity-60 cursor-not-allowed'
+                          ? 'border-red-200 bg-red-50 text-red-500'
                           : selectedDate && isSameDay(selectedDate, date)
                             ? 'border-teal-500 bg-teal-50 text-teal-700 ring-4 ring-teal-500/10'
-                            : 'border-slate-100 bg-white text-slate-600 hover:border-teal-200 cursor-pointer'
+                            : 'border-slate-100 bg-white text-slate-600 hover:border-teal-200'
                       }`}
                     >
                       <span className="text-xs font-semibold uppercase">{format(date, 'eee')}</span>

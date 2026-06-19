@@ -20,7 +20,6 @@ import Services from './pages/admin/Services';
 import BusinessHours from './pages/admin/BusinessHours';
 import BlockedDates from './pages/admin/BlockedDates';
 import ClinicSettingsPage from './pages/admin/ClinicSettings';
-import AdminProfile from './pages/admin/Profile';
 
 import ScrollToTop from './components/ScrollToTop';
 
@@ -48,7 +47,6 @@ export default function App() {
             <Route path="hours" element={<BusinessHours />} />
             <Route path="blocked-dates" element={<BlockedDates />} />
             <Route path="settings" element={<ClinicSettingsPage />} />
-            <Route path="profile" element={<AdminProfile />} />
           </Route>
         </Routes>
         <Toaster position="top-right" />
