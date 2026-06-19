@@ -8,6 +8,7 @@ import {
   CalendarOff, 
   Settings, 
   LogOut,
+  User,
   Stethoscope as ClinicIcon
 } from 'lucide-react';
 
@@ -34,6 +35,7 @@ export default function AdminLayout() {
     { name: 'Business Hours', path: '/admin/hours', icon: Clock },
     { name: 'Blocked Dates', path: '/admin/blocked-dates', icon: CalendarOff },
     { name: 'Clinic Settings', path: '/admin/settings', icon: Settings },
+    { name: 'Profile', path: '/admin/profile', icon: User },
   ];
 
   return (
@@ -85,12 +87,16 @@ export default function AdminLayout() {
 
         <div className="p-4 border-t border-slate-100">
           <div className="flex items-center gap-3 px-3 py-3 mb-2 rounded-xl bg-slate-50">
-            <div className="w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-sm">
-              {user.email?.charAt(0).toUpperCase() || 'A'}
-            </div>
+            {user.user_metadata?.avatar_url ? (
+              <img src={user.user_metadata.avatar_url} alt="Admin" className="w-8 h-8 rounded-full object-cover" />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-sm">
+                {user.email?.charAt(0).toUpperCase() || 'A'}
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-slate-900 truncate">
-                Admin
+                {user.user_metadata?.full_name || 'Admin'}
               </p>
               <p className="text-xs text-slate-500 truncate">
                 {user.email}
