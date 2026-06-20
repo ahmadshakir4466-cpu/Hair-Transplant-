@@ -295,7 +295,7 @@ export default function BookAppointment() {
                     <h3 className="font-bold text-slate-900 mb-2">{service.name}</h3>
                     <p className="text-sm text-slate-500 mb-4 line-clamp-2">{service.description}</p>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium text-slate-700">${service.price}</span>
+                      <span className="font-medium text-slate-700">PKR {service.price}</span>
                       <span className="text-slate-400 flex items-center gap-1"><Clock size={14} /> {service.duration_minutes} min</span>
                     </div>
                   </button>
@@ -447,7 +447,7 @@ export default function BookAppointment() {
                         value={formData.phone}
                         onChange={e => setFormData({...formData, phone: e.target.value})}
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition-all"
-                        placeholder="(555) 123-4567"
+                        placeholder="0300 1234567"
                       />
                     </div>
                   </div>
@@ -484,7 +484,7 @@ export default function BookAppointment() {
                    <div className="mb-6">
                     <p className="text-sm text-slate-500 mb-1">Service</p>
                     <p className="font-medium text-slate-900">{selectedService.name}</p>
-                    <p className="text-sm text-slate-600">${selectedService.price} • {selectedService.duration_minutes} min</p>
+                    <p className="text-sm text-slate-600">PKR {selectedService.price} • {selectedService.duration_minutes} min</p>
                    </div>
                 )}
                 
@@ -499,7 +499,7 @@ export default function BookAppointment() {
                 <div className="mt-8 pt-8 border-t border-slate-200">
                   <div className="flex justify-between items-center font-bold text-lg">
                     <span className="text-slate-900">Total</span>
-                    <span className="text-slate-900">${selectedService?.price || 0}</span>
+                    <span className="text-slate-900">PKR {selectedService?.price || 0}</span>
                   </div>
                   <p className="text-xs text-slate-500 mt-2 text-right">Payment required after visit.</p>
                 </div>

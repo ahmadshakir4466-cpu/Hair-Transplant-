@@ -4,7 +4,6 @@ import { useApp } from '../../contexts/AppContext';
 import { useEffect, useState } from 'react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabase';
 import { Service } from '../../types';
-import PatientTestimonials from '../../components/PatientTestimonials';
 
 export default function Home() {
   const { clinicSettings, isLoadingSettings } = useApp();
@@ -184,7 +183,7 @@ export default function Home() {
                   </div>
                   <div className="w-px h-4 bg-slate-200"></div>
                   <div className="font-medium text-slate-900">
-                    ${service.price}
+                    PKR {service.price}
                   </div>
                 </div>
 
@@ -262,7 +261,6 @@ export default function Home() {
       </section>
 
       {/* Patient Testimonials */}
-      <PatientTestimonials />
 
       {/* Service Details Modal */}
       {selectedService && (
@@ -294,7 +292,7 @@ export default function Home() {
                 </div>
                 <div className="w-px h-6 bg-slate-200"></div>
                 <div className="font-bold text-xl text-teal-700">
-                  ${selectedService.price}
+                  PKR {selectedService.price}
                 </div>
               </div>
               <h3 className="text-xl font-bold text-slate-800 mb-4">About this Service</h3>

@@ -255,7 +255,7 @@ export default function Services() {
                   <Clock size={14} className="text-slate-400" /> {service.duration_minutes}m
                 </div>
                 <div className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">
-                  <DollarSign size={14} className="text-slate-400" /> {service.price}
+                  <span className="text-slate-400 text-xs font-bold">PKR</span> {service.price}
                 </div>
               </div>
               
@@ -348,7 +348,7 @@ export default function Services() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Price ($)</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Price (PKR)</label>
                     <input 
                       required
                       type="number" 
