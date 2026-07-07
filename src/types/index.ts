@@ -68,3 +68,51 @@ export type AdminUser = {
   user_id: string;
   created_at: string;
 };
+
+export type BlogPost = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  featured_image: string;
+  author: string;
+  published_date: string;
+  category: string;
+  reading_time: string;
+  meta_title: string;
+  meta_description: string;
+  keywords: string[];
+  faqs?: { question: string; answer: string }[];
+};
+
+export type FAQItem = {
+  id: string;
+  question: string;
+  answer: string;
+  category: string;
+};
+
+export type TestimonialItem = {
+  id: string;
+  name: string;
+  role: string;
+  content: string;
+  rating: number;
+  is_verified: boolean;
+};
+
+export type SEOSettings = {
+  meta_title_suffix: string;
+  meta_description_fallback: string;
+  keywords: string[];
+  og_image: string;
+  twitter_card_type: string;
+  robots_txt: string;
+};
+
+export type LegalPolicies = {
+  privacy_policy: string;
+  terms_and_conditions: string;
+  cookie_policy: string;
+};

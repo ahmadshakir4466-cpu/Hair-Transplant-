@@ -8,6 +8,10 @@ import {
   CalendarOff, 
   Settings, 
   LogOut,
+  BookOpen,
+  HelpCircle,
+  MessageSquare,
+  Shield,
   Stethoscope as ClinicIcon
 } from 'lucide-react';
 
@@ -33,6 +37,10 @@ export default function AdminLayout() {
     { name: 'Services', path: '/admin/services', icon: Stethoscope },
     { name: 'Business Hours', path: '/admin/hours', icon: Clock },
     { name: 'Blocked Dates', path: '/admin/blocked-dates', icon: CalendarOff },
+    { name: 'Blogs (CMS)', path: '/admin/blogs', icon: BookOpen },
+    { name: 'FAQs (CMS)', path: '/admin/faqs', icon: HelpCircle },
+    { name: 'Reviews (CMS)', path: '/admin/testimonials', icon: MessageSquare },
+    { name: 'Legal Policies', path: '/admin/policies', icon: Shield },
     { name: 'Clinic Settings', path: '/admin/settings', icon: Settings },
   ];
 

@@ -37,8 +37,11 @@ export default function PublicLayout() {
 
             <div className="hidden md:flex items-center space-x-6">
               <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-slate-600 hover:text-teal-600 font-medium transition-colors">Home</Link>
-            <button onClick={() => handleNavClick('services')} className="text-slate-600 hover:text-teal-600 font-medium transition-colors cursor-pointer text-left">Services</button>
-            <button onClick={() => handleNavClick('about')} className="text-slate-600 hover:text-teal-600 font-medium transition-colors cursor-pointer text-left">Our Practice</button>
+              <button onClick={() => handleNavClick('services')} className="text-slate-600 hover:text-teal-600 font-medium transition-colors cursor-pointer text-left">Services</button>
+              <Link to="/about" className="text-slate-600 hover:text-teal-600 font-medium transition-colors">About</Link>
+              <Link to="/faq" className="text-slate-600 hover:text-teal-600 font-medium transition-colors">FAQ</Link>
+              <Link to="/blog" className="text-slate-600 hover:text-teal-600 font-medium transition-colors text-left">Blog</Link>
+              <Link to="/contact" className="text-slate-600 hover:text-teal-600 font-medium transition-colors text-left">Contact</Link>
               
               <div className="w-px h-6 bg-slate-200 mx-2"></div>
               
@@ -78,7 +81,10 @@ export default function PublicLayout() {
           <div className="md:hidden bg-white border-b border-slate-100 px-4 pt-2 pb-6 space-y-4 shadow-lg">
             <Link to="/" className="block px-3 py-2 text-slate-600 font-medium" onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>Home</Link>
             <button onClick={() => handleNavClick('services')} className="block w-full text-left px-3 py-2 text-slate-600 font-medium">Services</button>
-            <button onClick={() => handleNavClick('about')} className="block w-full text-left px-3 py-2 text-slate-600 font-medium">Our Practice</button>
+            <Link to="/about" className="block px-3 py-2 text-slate-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>About</Link>
+            <Link to="/faq" className="block px-3 py-2 text-slate-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>FAQ</Link>
+            <Link to="/blog" className="block px-3 py-2 text-slate-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
+            <Link to="/contact" className="block px-3 py-2 text-slate-600 font-medium" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
             
             <div className="border-t border-slate-100 pt-2 pb-2">
               {!user ? (
@@ -112,8 +118,8 @@ export default function PublicLayout() {
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-300 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-12">
-            <div>
+          <div className="grid md:grid-cols-4 gap-12">
+            <div className="md:col-span-2">
               <div className="flex items-center gap-2 mb-6">
                 <div className="bg-slate-800 p-2 rounded-xl text-teal-400">
                   <Stethoscope size={24} strokeWidth={1.5} />
@@ -126,7 +132,7 @@ export default function PublicLayout() {
             </div>
             
             <div>
-              <h4 className="text-white font-medium mb-6">Contact</h4>
+              <h4 className="text-white font-medium mb-6">Clinic Directory</h4>
               <ul className="space-y-4 text-slate-400">
                 {clinicSettings?.clinic_address && (
                   <li>{clinicSettings.clinic_address}</li>
@@ -145,15 +151,24 @@ export default function PublicLayout() {
             </div>
             
             <div>
-              <h4 className="text-white font-medium mb-6">Quick Links</h4>
+              <h4 className="text-white font-medium mb-6 font-semibold">Resources</h4>
               <ul className="space-y-4">
-                <li><Link to="/book" className="hover:text-teal-400 transition-colors">Book Appointment</Link></li>
-                <li><Link to="/admin" className="hover:text-teal-400 transition-colors">Admin Portal</Link></li>
+                <li><Link to="/" className="hover:text-teal-400 transition-colors">Home</Link></li>
+                <li><Link to="/about" className="hover:text-teal-400 transition-colors">About Us</Link></li>
+                <li><Link to="/blog" className="hover:text-teal-400 transition-colors">Clinical Blog</Link></li>
+                <li><Link to="/faq" className="hover:text-teal-400 transition-colors">FAQs Portal</Link></li>
+                <li><Link to="/contact" className="hover:text-teal-400 transition-colors">Contact Practice</Link></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
+
+          <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 gap-4">
             <p>&copy; {new Date().getFullYear()} {clinicName}. All rights reserved.</p>
+            <div className="flex flex-wrap gap-4 md:gap-6">
+              <Link to="/privacy-policy" className="hover:text-teal-400 transition-colors">Privacy Policy</Link>
+              <Link to="/terms-and-conditions" className="hover:text-teal-400 transition-colors">Terms &amp; Conditions</Link>
+              <Link to="/cookie-policy" className="hover:text-teal-400 transition-colors">Cookie Policy</Link>
+            </div>
           </div>
         </div>
       </footer>

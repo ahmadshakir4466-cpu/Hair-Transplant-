@@ -1,6 +1,6 @@
 {
-  "name": "Remix: DentaCore Pro 2",
-  "description": "A premium dental management platform featuring real-time patient booking, secure administrative controls, and a high-end healthcare experience.",
+  "name": "Aesthetic Laser & Hair Transplant Clinic",
+  "description": "Pakistan's premier clinical platform for FUE hair restoration, platelet-rich plasma (PRP) treatments, clinical laser hair removal, and medical-grade skincare.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
