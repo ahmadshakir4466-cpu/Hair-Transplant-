@@ -141,7 +141,7 @@ export default function BlogsManager() {
     <div className="p-6 md:p-8 space-y-6">
       
       {/* Header */}
-      <div className="flex justify-between items-center pb-6 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
             <BookOpen className="text-teal-600" /> Clinical Blogs Manager
@@ -151,7 +151,7 @@ export default function BlogsManager() {
         {!isEditing && (
           <button 
             onClick={handleOpenCreate}
-            className="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-4 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
+            className="bg-teal-600 hover:bg-teal-700 text-white text-xs sm:text-sm font-semibold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl transition-all shadow-sm flex items-center gap-2 cursor-pointer self-start sm:self-auto"
           >
             <Plus size={16} /> New Blog Post
           </button>

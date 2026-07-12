@@ -162,20 +162,40 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-teal-600 to-teal-800 rounded-2xl p-8 text-white flex flex-col items-start justify-center shadow-lg shadow-teal-900/20">
-          <h2 className="text-2xl font-bold mb-4">Quick Actions</h2>
-          <p className="text-teal-100 mb-8 max-w-xs">
-             Need to manage schedule availability or add a new service?
-          </p>
-          <div className="space-y-3 w-full">
-            <Link to="/admin/services" className="block w-full bg-white/10 hover:bg-white/20 border border-white/20 transition-colors rounded-xl px-4 py-3 text-left font-medium">
-              Manage Services
+        <div className="bg-gradient-to-br from-teal-600 to-teal-800 rounded-2xl p-6 text-white flex flex-col justify-between shadow-lg shadow-teal-950/20">
+          <div>
+            <h2 className="text-xl font-bold mb-1">Quick Access</h2>
+            <p className="text-teal-100/90 text-xs mb-6">
+              Access and manage all clinic operations directly.
+            </p>
+          </div>
+          <div className="space-y-2.5 w-full">
+            <Link to="/admin/appointments" className="block w-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all duration-200 rounded-xl px-4 py-2.5 text-left text-xs font-medium">
+              📅 Bookings &amp; Appointments
             </Link>
-            <Link to="/admin/hours" className="block w-full bg-white/10 hover:bg-white/20 border border-white/20 transition-colors rounded-xl px-4 py-3 text-left font-medium">
-              Update Business Hours
+            <Link to="/admin/services" className="block w-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all duration-200 rounded-xl px-4 py-2.5 text-left text-xs font-medium">
+              💇 Manage Services &amp; Prices
             </Link>
-            <Link to="/admin/blocked-dates" className="block w-full bg-white/10 hover:bg-white/20 border border-white/20 transition-colors rounded-xl px-4 py-3 text-left font-medium">
-              Manage Blocked Dates
+            <Link to="/admin/hours" className="block w-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all duration-200 rounded-xl px-4 py-2.5 text-left text-xs font-medium">
+              ⏰ Business Hours
+            </Link>
+            <Link to="/admin/blocked-dates" className="block w-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all duration-200 rounded-xl px-4 py-2.5 text-left text-xs font-medium">
+              🚫 Blocked Dates &amp; Holidays
+            </Link>
+            <Link to="/admin/blogs" className="block w-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all duration-200 rounded-xl px-4 py-2.5 text-left text-xs font-medium">
+              📝 Clinical Blogs (CMS)
+            </Link>
+            <Link to="/admin/faqs" className="block w-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all duration-200 rounded-xl px-4 py-2.5 text-left text-xs font-medium">
+              ❓ FAQs Portal (CMS)
+            </Link>
+            <Link to="/admin/testimonials" className="block w-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all duration-200 rounded-xl px-4 py-2.5 text-left text-xs font-medium">
+              ⭐ Reviews &amp; Testimonials
+            </Link>
+            <Link to="/admin/policies" className="block w-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all duration-200 rounded-xl px-4 py-2.5 text-left text-xs font-medium">
+              ⚖️ Legal &amp; Consent Policies
+            </Link>
+            <Link to="/admin/settings" className="block w-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all duration-200 rounded-xl px-4 py-2.5 text-left text-xs font-medium">
+              ⚙️ Clinic Settings
             </Link>
           </div>
         </div>
